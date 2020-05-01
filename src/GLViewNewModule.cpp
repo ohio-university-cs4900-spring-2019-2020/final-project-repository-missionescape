@@ -56,7 +56,7 @@ WOWayPointAbstract* usbw;
 WOWayPointAbstract* gasw;
 WOWayPointAbstract* dub;
 
-const std::string sharedMM = ManagerEnvironmentConfiguration::getSMM();
+const std::string sharedMM(ManagerEnvironmentConfiguration::getSMM() + "/fonts/ANDLSO.ttf");
 
 GLViewNewModule* GLViewNewModule::New( const std::vector< std::string >& args )
 {
@@ -103,24 +103,6 @@ void GLViewNewModule::onCreate()
 	noise->setDefaultVolume(0.9f);
 	ISound* sound = Engine->play3D(noise, vec3df(50, 50, 50), true);
 
-	//WOGUILabel* label = WOGUILabel::New(sharedMM + "/fonts/");
-	//label->setText("some text");
-	//label->setColor(255, 0, 0, 255);
-	//label->setFontSize(30); //font size is correlated with world size
-	//label->setPosition(Vector(0, 1, 0));
-	//label->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
-	//label->setFontPath(comicSans);
-	//worldLst->push_back(label);
-
-	WOGUILabel* label = WOGUILabel::New(nullptr);
-	label->setText("text goes here");
-	label->setColor(0, 255, 0, 255);
-	label->setFontSize(32);
-	label->setPosition(Vector(0, 1, 0));
-	label->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
-	label->setFontPath(sharedMM);
-	worldLst->push_back(label);
-
 	//this->cam->setPosition(-500, 325, 15);
 
    if( this->pe != NULL )
@@ -162,47 +144,51 @@ void GLViewNewModule::updateWorld()
 	);
 
 
-	if (escape_items == 0) {
+	if (escape_items == 4) {
+		this->escapeMsg = this->escapeText();
+		escape_items = 0;
 	}
-
-
 
 	if (keyw->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(key);
 		worldLst->eraseViaWOptr(keyw);
 		worldLst->eraseViaWOptr(open);
 		keyw->reset_trigger();
-		escape_items++;
 	}
 
 	if (cardw->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(card);
 		worldLst->eraseViaWOptr(cardw);
 		worldLst->eraseViaWOptr(slide);
-		escape_items++;
+		cardw->reset_trigger();
 	}
 
 	if (remotew->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(remote);
 		worldLst->eraseViaWOptr(remotew);
 		worldLst->eraseViaWOptr(lift);
+		remotew->reset_trigger();
+		escape_items++;
 	}
 
 	if (carw->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(car);
 		worldLst->eraseViaWOptr(carw);
+		carw->reset_trigger();
 		escape_items++;
 	}
 
 	if (usbw->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(usb);
 		worldLst->eraseViaWOptr(usbw);
+		usbw->reset_trigger();
 		escape_items++;
 	}
 
 	if (gasw->isTriggered() == 1) {
 		worldLst->eraseViaWOptr(gas);
 		worldLst->eraseViaWOptr(gasw);
+		gasw->reset_trigger();
 		escape_items++;
 	}
 
@@ -248,7 +234,6 @@ void GLViewNewModule::onMouseMove( const SDL_MouseMotionEvent& e )
 
 void GLViewNewModule::onKeyDown(const SDL_KeyboardEvent& key)
 {
-	//if (!this->typing) {
 		GLView::onKeyDown(key);
 		if (key.keysym.sym == SDLK_0)
 			this->setNumPhysicsStepsPerRender(1);
@@ -257,10 +242,10 @@ void GLViewNewModule::onKeyDown(const SDL_KeyboardEvent& key)
 
 		SDL_Keycode pressed = key.keysym.sym;
 		if (pressed == SDLK_w && this->cam != nullptr) {
-			this->cam->moveInLookDirection(10);
+			this->cam->moveInLookDirection(4);
 		}
 		if (pressed == SDLK_s && this->cam != nullptr) {
-			this->cam->moveOppositeLookDirection(10);
+			this->cam->moveOppositeLookDirection(4);
 		}
 		if (pressed == SDLK_a && this->cam != nullptr) {
 			this->cam->moveLeft();
@@ -278,8 +263,7 @@ void GLViewNewModule::onKeyDown(const SDL_KeyboardEvent& key)
 			this->cam->moveRight();
 			this->cam->moveRight();
 		}
-		//this->KeyPress(key.itemsym.sym);
-	//}
+		
 }
 
 
@@ -320,7 +304,7 @@ void Aftr::GLViewNewModule::loadMap()
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_cloudy+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_cloudy3+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_day+6.jpg" );
-   skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_day2+6.jpg" );
+   //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_day2+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_deepsun+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_evening+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_morning+6.jpg" );
@@ -331,7 +315,7 @@ void Aftr::GLViewNewModule::loadMap()
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_gray_matter+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_easter+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_hot_nebula+6.jpg" );
-   //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_ice_field+6.jpg" );
+   skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_ice_field+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_lemon_lime+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_milk_chocolate+6.jpg" );
    //skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_solar_bloom+6.jpg" );
@@ -368,23 +352,46 @@ void Aftr::GLViewNewModule::loadMap()
    wo->setLabel( "Grass" );
    worldLst->push_back( wo );
 
-   WOFTGLString* string = WOFTGLString::New(sharedMM + "/fonts/rod.tff", 45);//front size should not be confused with world size
-   string->setText("this is a test.");
+
+   WOFTGLString* string = WOFTGLString::New(sharedMM, 20);//front size should not be confused with world size
+   string->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+   string->getModelT<MGLFTGLString>()->setSize(25, 10);
+   string->getModelT<MGLFTGLString>()->setText("Instruction1");
+   string->setText("Collect keys to ");
    string->rotateAboutGlobalX(Aftr::PI / 2);
-   string->setPosition(-480, 325, 15);
-   string->getModel()->setLookDirection(Vector(0, 1, 1));
-   string->getModel()->setNormalDirection(Vector(-1, 0, 0));
-   string->getModel()->setScale(Vector(1000, 1000, 1000));
+   string->rotateAboutGlobalZ(-1.575);
+   string->setPosition(-359, 325, 20);
    worldLst->push_back(string);
 
-   //WOFTGLString* string = WOFTGLString::New(sharedMM + "/fonts/arial.tff", 30);//front size should not be confused with world size
-   //string->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
-   //string->getModelT<MGLFTGLString>()->setSize(30, 10);
-   //string->getModelT<MGLFTGLString>()->setText("This is a test.");
-   //string->setText("This is only a test.");
-   //string->rotateAboutGlobalX(Aftr::PI / 2);
-   //string->setPosition(0, 0, 10);
+   WOFTGLString* instr = WOFTGLString::New(sharedMM, 20);//front size should not be confused with world size
+   instr->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+   instr->getModelT<MGLFTGLString>()->setSize(30, 10);
+   instr->getModelT<MGLFTGLString>()->setText("Instruction2");
+   instr->setText("move to next maze");
+   instr->rotateAboutGlobalX(Aftr::PI / 2);
+   instr->rotateAboutGlobalZ(-1.575);
+   instr->setPosition(-359, 325, 10);
+   worldLst->push_back(instr);
 
+   WOFTGLString* instr2 = WOFTGLString::New(sharedMM, 20);//front size should not be confused with world size
+   instr2->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+   instr2->getModelT<MGLFTGLString>()->setSize(30, 10);
+   instr2->getModelT<MGLFTGLString>()->setText("Instruction3");
+   instr2->setText("Collect 4 objects");
+   instr2->rotateAboutGlobalX(Aftr::PI / 2);
+   instr2->rotateAboutGlobalZ(1.575);
+   instr2->setPosition(-500, 474, 15);
+   worldLst->push_back(instr2);
+
+   WOFTGLString* instr3 = WOFTGLString::New(sharedMM, 20);//front size should not be confused with world size
+   instr3->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+   instr3->getModelT<MGLFTGLString>()->setSize(30, 10);
+   instr3->getModelT<MGLFTGLString>()->setText("Instruction4");
+   instr3->setText("to escape");
+   instr3->rotateAboutGlobalX(Aftr::PI / 2);
+   instr3->rotateAboutGlobalZ(1.575);
+   instr3->setPosition(-500, 474, 10);
+   worldLst->push_back(instr3);
 
    //These are my escape items 
    usb = WO::New("../mm/models/usb.3ds", Vector(.7, .7, .7));
@@ -422,15 +429,6 @@ void Aftr::GLViewNewModule::loadMap()
 
 
    //Maze and maze items
-
-
-   /*WO* helo = WO::New("../mm/models/orca.dae", Vector(20,20,20), MESH_SHADING_TYPE::mstFLAT);
-   helo->setPosition(Vector(-1450, 580, 80));
-   helo->renderOrderType = RENDER_ORDER_TYPE::roBLEND_FUNC_GL_ONE;
-   worldLst->push_back(helo);*/
-
-   createNewModuleWayPoints();
-
    WO* maze2 = WO::New("../mm/models/maze.dae", Vector(30, 30, 20));
    maze2->setPosition(Vector(-1450, 580, 20));
    worldLst->push_back(maze2);
@@ -438,11 +436,6 @@ void Aftr::GLViewNewModule::loadMap()
    WO* maze = WO::New("../mm/models/Labyrinth.3ds", Vector(50, 50, 100));
    maze->setPosition(Vector(0, 0, 15));
    worldLst->push_back(maze);
-
-   /*WO* door = WO::New("../mm/models/door.dae", Vector(18, 18, 18));
-   door->setPosition(Vector(-500, 474, 15));
-   door->rotateAboutRelZ(-1.575);
-   worldLst->push_back(door);*/
 
    WO* wall = WO::New("../mm/models/wall.dae", Vector(90, 40, 40));
    wall->setPosition(Vector(-1405, -216, 15));
@@ -474,15 +467,6 @@ void Aftr::GLViewNewModule::loadMap()
    wall6->rotateAboutRelZ(2.975);
    worldLst->push_back(wall6);
 
-   /*WO* gate = WO::New("../mm/models/gate.DAE", Vector(470, 470, 200));
-   gate->setPosition(Vector(-1410, 580, 0));
-   worldLst->push_back(gate);*/
-   
-   /*WO* glass = WO::New("../mm/models/glass.dae", Vector(20, 27, 17));
-   glass->setPosition(Vector(50, 23, 16));
-   glass->rotateAboutGlobalZ(-1.575);
-   worldLst->push_back(glass); */
-
    //Doors and Gate disappear if the right items are collected
    open = WO::New("../mm/models/door.dae", Vector(18, 18, 18));
    open->setPosition(Vector(-500, 474, 15));
@@ -499,6 +483,19 @@ void Aftr::GLViewNewModule::loadMap()
    worldLst->push_back(lift);
 
    createNewModuleWayPoints();
+}
+
+WOFTGLString* GLViewNewModule::escapeText() {
+	WOFTGLString* escape = WOFTGLString::New(sharedMM, 70);//front size should not be confused with world size
+	escape->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+	escape->getModelT<MGLFTGLString>()->setSize(100, 80);
+	escape->getModelT<MGLFTGLString>()->setText("escape");
+	escape->setText("Use arrow keys to fly helicopter");
+	escape->rotateAboutGlobalX(Aftr::PI / 2);
+	escape->rotateAboutGlobalZ(1.575);
+	escape->setPosition(-1440, 580, 150);
+	worldLst->push_back(escape);
+	return escape;
 }
 
 bool GLViewNewModule::isMoving() {
@@ -533,7 +530,7 @@ void GLViewNewModule::createNewModuleWayPoints()
 
 
 	keyw = WOWP1::New(items, 30);
-	keyw->setPosition(Vector(21, 20, 0));
+	keyw->setPosition(Vector(21, 20, 15));
 	worldLst->push_back(keyw);
 
 	cardw = WOWP1::New(items, 30);
@@ -545,11 +542,11 @@ void GLViewNewModule::createNewModuleWayPoints()
 	worldLst->push_back(remotew);
 
 	carw = WOWP1::New(items, 30);
-	carw->setPosition(Vector(-1749, 1085, 0));
+	carw->setPosition(Vector(-1749, 1085, 15));
 	worldLst->push_back(carw);
 
 	usbw = WOWP1::New(items, 30);
-	usbw->setPosition(Vector(-900, 950, 0));
+	usbw->setPosition(Vector(-900, 950, 15));
 	worldLst->push_back(usbw);
 
 	gasw = WOWP1::New(items, 30);
@@ -567,39 +564,3 @@ void GLViewNewModule::createNewModuleWayPoints()
    worldLst->push_back( wayPt );*/
 
 
-/*void GLViewNewModule::KeyPress(const SDL_Keycode& key) {
-	if (this->typing) {
-		switch (key) {
-		case SDLK_RETURN:
-			this->typing = false;
-			break;
-		case SDLK_LSHIFT:
-		case SDLK_RSHIFT:
-			if (!this->shift) {
-				this->shift = true;
-			}
-			break;
-		case SDLK_TAB:
-			net->sendNetMsgSynchronousTCP(NetMsgTxt(this->worldTxt->getText()));
-			break;
-		case SDLK_ESCAPE:
-			this->typing = false;
-			break;
-		default:
-			this->type(key);
-		}
-		return;
-	}
-	switch (key) {
-	case SDLK_RETURN:
-		this->typing = true;
-		if (this->worldTxt->getText() == this->initTxt) {
-			this->worldTxt->setText("");
-		}
-		return;
-	case SDLK_b:
-		this->Bananer();
-		break;
-	default: break;
-	}
-}*/
