@@ -52,8 +52,8 @@ namespace Aftr {
 		float lookAngle = 0;
 		float yaw = 0;
 
-		/*float Rads(float deg);
-		float Degs(float rad);*/
+		float Rads(float deg);
+		float Degs(float rad);
 
 
 	protected:
@@ -65,15 +65,15 @@ namespace Aftr {
 		float angleAround = 0;
 		float pitch = 16.1892f;
 		void calcZoom(const SDL_MouseWheelEvent& e);
-		/*float calcHori();
+		float calcHori();
 		float calcVert();
-		void calcCamPos(float hori, float vert);*/
+		void calcCamPos(float hori, float vert);
 
 		WOdriving(
-			const std::string modelFileName = "../mm/models/ninja.dae",
+			const std::string modelFileName = "../mm/models/orca.dae",
 			Vector scale = Vector(1, 1, 1),
 			MESH_SHADING_TYPE shadingType = MESH_SHADING_TYPE::mstSMOOTH,
-			std::string label = "ninja",
+			std::string label = "orca",
 			Vector pos = Vector(-495, 325, 8)
 		);
 	private:
