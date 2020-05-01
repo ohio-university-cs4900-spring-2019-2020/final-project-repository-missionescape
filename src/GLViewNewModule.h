@@ -5,6 +5,7 @@
 #include "NetMessengerClient.h"
 #include "../cwin64/WOdriving.h"
 #include "WO.h"
+#include "WOFTGLString.h"
 
 using namespace irrklang;
 namespace Aftr
@@ -38,11 +39,13 @@ public:
 	WO* car;
 	WO* usb;
 	WO* gas;
+	WOFTGLString* escapeMsg;
 
 	int keyo = 0;
 	int cards = 0;
 	int remotel = 0;
 	int escape_items = 0;
+
 
    WOdriving* orca;
    static GLViewNewModule* New( const std::vector< std::string >& outArgs );
@@ -61,6 +64,7 @@ public:
    Vector getLookDirection() { return orca->getLookDirection(); };
 
 protected:
+   WOFTGLString* escapeText();
    GLViewNewModule( const std::vector< std::string >& args );
    virtual void onCreate();   
    ISoundEngine* Engine = nullptr; 
