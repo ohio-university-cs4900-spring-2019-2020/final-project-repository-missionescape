@@ -15,15 +15,25 @@ WOdriving* WOdriving::New(const std::string modelFilename, Vector scale, MESH_SH
 }
 
 WOdriving::WOdriving(const std::string modelFileName, Vector scale, MESH_SHADING_TYPE shadingType, std::string label, Vector pos) {
-	this->speed = 3;
+	this->speed = 5;
 	this->roll = 0;
-	//this->driver = nullptr;
+	this->driver = nullptr;
 	this->orca = WO::New(modelFileName, scale, shadingType);
 	this->orca->setLabel(label);
 	this->orca->setPosition(pos);
 }
 
 WOdriving::~WOdriving() {}
+
+void WOdriving::setDriver(Camera* driver) {
+	this->driver = driver;
+	if (driver != nullptr) {
+		this->driver->setPosition(this->getPosition() + Vector(0, 0, this->calcVert()));
+		this->driver->setParentWorldObject(this->orca);
+	} else {
+		this->keysPressed.clear();
+	}
+}
 
 void WOdriving::onKeyDown(const SDL_KeyboardEvent& key) {
 	SDL_Keycode keyDown = key.keysym.sym;
@@ -47,7 +57,7 @@ void WOdriving::onKeyDown(const SDL_KeyboardEvent& key) {
 		std::set<SDL_Keycode>::iterator found = keysPressed.find(keyDown);
 		if (found == keysPressed.end()) {
 			keysPressed.insert(keyDown);
-		}
+		} 
 	}
 }
 
@@ -64,7 +74,30 @@ void WOdriving::onKeyUp(const SDL_KeyboardEvent& key) {
 void WOdriving::onMouseDown(const SDL_MouseButtonEvent& e) {}
 void WOdriving::onMouseUp(const SDL_MouseButtonEvent& e) {}
 void WOdriving::onMouseMove(const SDL_MouseMotionEvent& e) {}
+void WOdriving::onMouseWheelScroll(const SDL_MouseWheelEvent& e) { this->calcZoom(e); }
 
+void WOdriving::calcZoom(const SDL_MouseWheelEvent& e) {
+	float zoomLVL = e.direction * 0.1f;
+	this->distanceFromorca -= zoomLVL;
+}
+
+float WOdriving::calcHori() {
+	return this->distanceFromorca * std::cos(this->Rads(this->pitch));
+}
+float WOdriving::calcVert() {
+	return this->distanceFromorca * std::sin(this->Rads(this->pitch));
+}
+
+void WOdriving::calcCamPos(float hori, float vert) {
+	float theta = this->Degs(this->getLookDirection().y) + angleAround;
+	float offX = hori * std::sin(this->Rads(theta));
+	float offY = hori * std::cos(this->Rads(theta));
+	Vector pos = this->getPosition();
+	if (this->hasDriver()) {
+		this->driver->setPosition(pos.x - 10, pos.y + 0, pos.z + vert);
+	}
+	this->yaw = 180 - (this->Degs(this->getLookDirection().y) + angleAround);
+}
 
 void WOdriving::update() {
 	for (std::set<SDL_Keycode>::iterator it = this->keysPressed.begin(); it != this->keysPressed.end(); ++it) {
@@ -106,6 +139,13 @@ bool WOdriving::isMoving() {
 		|| this->keysPressed.find(SDLK_w) != this->keysPressed.end()
 		|| this->keysPressed.find(SDLK_DOWN) != this->keysPressed.end()
 		|| this->keysPressed.find(SDLK_s) != this->keysPressed.end();
+}
+
+float WOdriving::Rads(float deg) {
+	return std::tan((deg * Aftr::PI) / 180);
+}
+float WOdriving::Degs(float rad) {
+	return rad * (180 / Aftr::PI);
 }
 
 #endif
